@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Persons</title>
+</head>
+<body>
+<div>
+    <form method="get" th:action="@{/person}">
+        <p><b>Поиск</b><br>
+            <input type="text" name="info" size="40" th:value="${info}">
+            <button type="submit">Поиск</button>
+        </p>
+</form>
+</div>
+<div th:switch="${personList}">
+    <h2 th:case="null">No users found!</h2>
+    <div th:case="*">
+        <h2>Person list</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Age</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="person : ${personList}">
+                <td th:text="${person.id}"></td>
+                <td th:text="${person.firstName}"></td>
+                <td th:text="${person.lastName}"></td>
+                <td th:text="${person.age}"></td>
+                <td><a th:href="@{person-update/{id}(id=${person.id})}">Edit</a></td>
+                <td><a th:href="@{person-delete/{id}(id=${person.id})}">Delete</a></td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p><a href="/person-create">Create user</a></p>
+</div>
+</body>
+</html>
