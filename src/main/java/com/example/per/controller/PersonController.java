@@ -2,13 +2,18 @@ package com.example.per.controller;
 
 import com.example.per.entity.Person;
 import com.example.per.service.PersonService;
-import com.example.per.service.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -21,11 +26,6 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping("/person/{id}")
-    public Person getById(@PathVariable Long id){
-        return personService.getById(id);
-    }
-
     @GetMapping("/person")
     public String getAll(@RequestParam(value = "info", required = false) String info,
                          Model model){
@@ -36,20 +36,30 @@ public class PersonController {
         return "person-list";
     }
 
+    @GetMapping("/person/{id}")
+    public Person getById(@PathVariable Long id){
+        return personService.getById(id);
+    }
+
     @GetMapping("/person-create")
-    public String createUserForm(Person person){
+    public String createPersonForm(Person person){
         return "person-create";
     }
 
     @PostMapping("/person-create")
-    public String createPerson(Person person){
-        personService.savePerson(person);
-        return "redirect:/person";
-    }
+    public String createPerson(@Valid Person person,
+                               BindingResult bindingResult,
+                               Model model) {
 
-    @GetMapping("/person-delete/{id}")
-    public String deletePerson(@PathVariable Long id){
-        personService.deleteById(id);
+        if(bindingResult.hasErrors()){
+            Map<String, String> errorMap = ControllerUtil.getErrors(bindingResult);
+            model.addAllAttributes(errorMap);
+            model.addAttribute("person", person);
+
+            return "/person-create";
+        }
+
+        personService.savePerson(person);
         return "redirect:/person";
     }
 
@@ -61,8 +71,25 @@ public class PersonController {
     }
 
     @PostMapping("/person-update")
-    public String updatePerson(Person person){
-        personService.savePerson(person);
+    public String updatePerson(@Valid Person person,
+                               BindingResult bindingResult,
+                               Model model){
+
+        if(bindingResult.hasErrors()) {
+            Map<String, String> errorMap = ControllerUtil.getErrors(bindingResult);
+            model.addAllAttributes(errorMap);
+            model.addAttribute("person", person);
+
+            return "person-edit";
+        }
+
+            personService.savePerson(person);
+        return "redirect:/person";
+    }
+
+    @GetMapping("/person-delete/{id}")
+    public String deletePerson(@PathVariable Long id){
+        personService.deleteById(id);
         return "redirect:/person";
     }
 }
