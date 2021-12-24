@@ -1,6 +1,7 @@
 package com.example.per.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "PERSON")
@@ -10,12 +11,16 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Поле не может быть пустым")
     @Column(name = "FIRST_NAME")
     private String firstName;
 
+    @NotBlank(message = "Поле не может быть пустым")
     @Column(name = "LAST_NAME")
     private String lastName;
 
+    @NotNull
+    @Min(1) @Max(90)
     @Column(name = "AGE")
     private int age;
 
@@ -26,6 +31,10 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

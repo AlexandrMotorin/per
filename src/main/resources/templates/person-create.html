@@ -8,9 +8,15 @@
 <form action="#" th:action="@{/person-create}" th:object="${person}" method="post">
     <label for="firstName">First name</label>
     <input type="text" th:field="*{firstName}" id="firstName" placeholder="First Name">
+    <div th:if="${firstNameError} != null">
+        <div style="background-color: red " th:text="${firstNameError}"></div>
+    </div>
     <br/>
     <label for="lastName">Last name</label>
     <input type="text" th:field="*{lastName}" id="lastName" placeholder="Last Name">
+    <div th:if="${lastNameError} != null">
+        <div style="background-color: red" th:text="${lastNameError}"></div>
+    </div>
     <br/>
     <label for="age">Age</label>
     <input type="text" th:field="*{age}" id="age" placeholder="Age">
